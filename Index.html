@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Connexion</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --blue: #00aaff;
+      --blue-dark: #0077cc;
+    }
+    * { box-sizing: border-box; margin:0; padding:0; }
+    body {
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: url('barea.jpg'), url('maroc.jpg');
+      background-position: left center, right center;
+      background-size: 50% 100%, 50% 100%;
+      background-repeat: no-repeat, no-repeat;
+      overflow: hidden;
+    }
+    .login-box {
+      background: rgba(0,0,0,0.7);
+      padding: 30px;
+      border-radius: 16px;
+      width: min(340px, 92vw);
+      text-align: center;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+      color: white;
+    }
+    h1 {
+      margin-bottom: 20px;
+      font-size: 26px;
+      font-weight: bold;
+      color: var(--blue);
+      text-transform: uppercase;
+    }
+    .field {
+      width: 100%;
+      margin: 10px 0;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 10px;
+      padding: 12px 14px;
+      color: white;
+      font-size: 15px;
+      outline: none;
+      transition: border .2s ease;
+    }
+    .field:focus { border-color: var(--blue); }
+    .btn {
+      width: 100%;
+      margin-top: 14px;
+      border: 0;
+      border-radius: 12px;
+      padding: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      background: var(--blue);
+      color: #fff;
+      transition: transform .15s, background .2s;
+    }
+    .btn:hover { background: var(--blue-dark); transform: scale(1.05); }
+  </style>
+</head>
+<body>
+  <div class="login-box">
+    <h1>Connexion</h1>
+    <form action="match.html" method="get">
+      <input class="field" type="text" placeholder="Numéro" required />
+      <input class="field" type="password" placeholder="Mot de passe" required />
+      <button class="btn" type="submit">Login</button>
+    </form>
+  </div>
+</body>
+</html>

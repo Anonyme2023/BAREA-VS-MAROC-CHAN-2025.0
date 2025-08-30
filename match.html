@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Match du jour</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root{
+      --blue:#00aaff; --blue-dark:#0077cc;
+      --accent:#28a745; --accent-dark:#1e7e34;
+      --bg1:#001f3f; --bg2:#003366;
+      --card:rgba(0,0,0,0.78); --text:#e8eef5; --muted:#bcd2e6; --gold:#ffcc00;
+    }
+    *{box-sizing:border-box}
+    body{
+      font-family:"Segoe UI", Tahoma, sans-serif;
+      background: linear-gradient(135deg, var(--bg1), var(--bg2));
+      min-height:100vh; margin:0; display:grid; place-items:center; color:var(--text);
+    }
+    .box{
+      width:min(440px,94vw); background:var(--card); border-radius:18px;
+      padding:26px; box-shadow:0 14px 45px rgba(0,0,0,.65); backdrop-filter: blur(6px);
+    }
+    h1{
+      margin:0 0 14px; font-size:24px; color:var(--blue); text-transform:uppercase; letter-spacing:.5px;
+      text-align:center;
+    }
+    .info{
+      background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.12);
+      border-radius:12px; padding:14px; margin-bottom:16px; line-height:1.55;
+    }
+    .row{display:flex; justify-content:space-between; gap:10px; align-items:center; margin:6px 0;}
+    .muted{color:var(--muted)}
+    .teams{
+      display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:10px 0 2px;
+    }
+    .team-btn{
+      border:1px solid rgba(255,255,255,.15);
+      background: rgba(255,255,255,.06);
+      color:#fff; padding:12px; border-radius:12px; font-weight:700; cursor:pointer;
+      transition:transform .12s, border .15s, box-shadow .15s, background .2s;
+      text-transform:uppercase; letter-spacing:.3px;
+    }
+    .team-btn:hover{ transform: translateY(-1px); border-color: var(--blue); }
+    .team-btn.active{
+      background: linear-gradient(0deg, rgba(0,170,255,.18), rgba(0,170,255,.18));
+      border-color: var(--blue); box-shadow: 0 0 0 2px rgba(0,170,255,.18) inset;
+    }
+    .deposit{ margin-top:12px; display:grid; gap:10px; }
+    .btn{
+      width:100%; border:0; border-radius:12px; padding:12px 16px; font-weight:800; cursor:pointer;
+      background: var(--accent); color:#fff; transition: transform .12s, background .2s, opacity .2s;
+    }
+    .btn:hover{ background: var(--accent-dark); transform: translateY(-1px); }
+    .btn[disabled]{ opacity:.55; cursor:not-allowed; transform:none; }
+    #resume { margin-top:8px; font-weight:700; }
+    #result{ margin-top:12px; font-weight:800; color:var(--gold); text-align:center; }
+    .call-link {
+      display:inline-block; margin-top:10px; padding:10px 14px; background:#0077cc;
+      border-radius:10px; color:#fff; text-decoration:none; font-weight:800;
+    }
+    .call-link:hover{ background:#005fa3; }
+    .hint{ font-size:12px; color:var(--muted); margin-top:6px; text-align:center; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h1>Match du CHAN</h1>
+
+    <div class="info">
+      <div class="row"><span><strong>Mise (fixe)</strong></span><span id="mise">—</span></div>
+      <div class="row"><span><strong>Lot</strong></span><span id="lot">—</span></div>
+      <div class="row"><span><strong>Heure début</strong></span><span id="heure" class="muted">—</span></div>
+
+      <p style="margin:10px 0 6px;"><strong>Choisis ton équipe</strong></p>
+      <div class="teams">
+        <button type="button" id="btn-barea" class="team-btn">Barea</button>
+        <button type="button" id="btn-maroc" class="team-btn">Maroc</button>
+      </div>
+      <p id="resume" class="muted">Sélection actuelle : <strong id="choix">—</strong></p>
+    </div>
+
+    <div class="deposit">
+      <button id="btn-depot" class="btn" type="button" disabled>Déposer</button>
+      <div id="result"></div>
+      <p class="hint">Le lien ouvre le menu USSD Mvola (*111#) sur smartphone. Saisis ensuite le numéro et la raison.</p>
+    </div>
+  </div>
+
+  <script>
+    // Valeurs fixes demandées
+    const MISE = 100000;   // 100 000 AR
+    const LOT  = 800000;   // 800 000 AR
+    const NUM_MVOLA = "0346076565";
+
+    // Mise & lot formatés
+    const fmt = n => n.toLocaleString("fr-FR") + " AR";
+    document.getElementById("mise").textContent = fmt(MISE);
+    document.getElementById("lot").textContent  = fmt(LOT);
+
+    // Heure du match (exemple aujourd’hui 18:00)
+    const h = new Date();
+    h.setHours(18, 0, 0, 0);
+    document.getElementById("heure").textContent = h.toLocaleString("fr-FR");
+
+    // Sélection équipe
+    let team = null;
+    const choixEl = document.getElementById("choix");
+    const resumeEl = document.getElementById("resume");
+    const btnDepot = document.getElementById("btn-depot");
+    const btnBarea = document.getElementById("btn-barea");
+    const btnMaroc = document.getElementById("btn-maroc");
+
+    function setActive(btnOn, btnOff, value){
+      btnOn.classList.add("active");
+      btnOff.classList.remove("active");
+      team = value;
+      choixEl.textContent = value;
+      resumeEl.innerHTML = `Sélection actuelle : <strong>${value}</strong> — Mise <strong>${fmt(MISE)}</strong>`;
+      btnDepot.disabled = false;
+    }
+    btnBarea.addEventListener("click", () => setActive(btnBarea, btnMaroc, "Barea"));
+    btnMaroc.addEventListener("click", () => setActive(btnMaroc, btnBarea, "Maroc"));
+
+    // Dépôt -> affiche récap + lien USSD
+    btnDepot.addEventListener("click", () => {
+      const recap = `
+        <div>Transfert Mvola</div>
+        <div><strong>Numéro :</strong> ${NUM_MVOLA}</div>
+        <div><strong>Raison :</strong> ${team}</div>
+        <div><strong>Mise :</strong> ${fmt(MISE)}</div>
+        <a href="tel:*111#" class="call-link">Lancer Mvola</a>
+      `;
+      document.getElementById("result").innerHTML = recap;
+    });
+  </script>
+</body>
+</html>
